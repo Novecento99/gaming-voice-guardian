@@ -7,8 +7,8 @@ import time
 from termcolor import colored, cprint
 import keyboard
 
-check=True
-BarLenght= 60
+check = True
+BarLenght = 60
 
 os.system('color')
 os.system('mode con: cols=65 lines=32')
@@ -45,30 +45,30 @@ print(r"""
 """)
 
 ValMax = int(val)
-print(" p to pause, give a banana to Scimia at paypal.me/Novecento99" +"\033[F"+"\033[F"+"\033[F")
+print(" p to pause, give a banana to Scimia at paypal.me/Novecento99" + "\033[F" + "\033[F" + "\033[F")
+
 
 def main(indata, outdata, frames, timeM, status):
     global check
-    Loudness = np.linalg.norm(indata)*10
-    Bar=int(Loudness*(BarLenght/ValMax))
+    Loudness = np.linalg.norm(indata) * 10
+    Bar = int(Loudness * (BarLenght / ValMax))
     if keyboard.is_pressed('p'):
-            check = not check
-            if(check):
-                print("\n\n p to pause " +"\033[F"+"\033[F"+"\033[F")
-                time.sleep(0.1)
-            else:
-                print("\n\n p to resume" +"\033[F"+"\033[F"+"\033[F")
-                time.sleep(0.1)
-    
-    if (Loudness < ValMax):
-        print (' ['+ '|' * Bar+ ' ' * (BarLenght-Bar)+']',end='\r')
+        check = not check
+        if (check):
+            print("\n\n p to pause " + "\033[F" + "\033[F" + "\033[F")
+            time.sleep(0.1)
+        else:
+            print("\n\n p to resume" + "\033[F" + "\033[F" + "\033[F")
+            time.sleep(0.1)
+
+    if Loudness < ValMax:
+        print(' [' + '|' * Bar + ' ' * (BarLenght - Bar) + ']', end='\r')
     else:
-        print (colored(' ['+ '!' * BarLenght+']','red'),end='\r')
+        print(colored(' [' + '!' * BarLenght + ']', 'red'), end='\r')
         if check:
             sd.play(data, fs)
             sd.wait()
-    
+
 
 with sd.Stream(callback=main):
-    sd.sleep(24*60*60000)
-
+    sd.sleep(24 * 60 * 60000)
