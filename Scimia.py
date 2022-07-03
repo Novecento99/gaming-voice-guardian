@@ -1,11 +1,11 @@
-import sounddevice as sd
-import numpy as np
-import soundfile as sf
-import sys
+
 import os
 import time
-from termcolor import colored, cprint
 import keyboard
+import numpy as np
+import sounddevice as sd
+import soundfile as sf
+from termcolor import colored
 
 check = True
 BarLenght = 60
@@ -54,7 +54,7 @@ def main(indata, outdata, frames, timeM, status):
     Bar = int(Loudness * (BarLenght / ValMax))
     if keyboard.is_pressed('p'):
         check = not check
-        if (check):
+        if check:
             print("\n\n p to pause " + "\033[F" + "\033[F" + "\033[F")
             time.sleep(0.1)
         else:
