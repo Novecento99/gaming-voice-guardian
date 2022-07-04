@@ -6,6 +6,7 @@ This script is meant to be run directly.
 
 import os
 import time
+import sys
 from queue import Queue
 
 import keyboard
@@ -28,7 +29,11 @@ print(r"""               _           _                __      __
                                        /_/       by Novecento                                                                                                                           
 """)
 
-val = input(" Set microphone treshold: ")
+if len(sys.argv)>1:
+    print('Volume threshold set to ' + sys.argv[1])
+    val = sys.argv[1]
+else:
+    val = input(" Set microphone treshold: ")
 
 print(" Scimia is alarmed... ")
 print(r"""
