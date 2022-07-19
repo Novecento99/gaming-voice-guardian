@@ -5,6 +5,7 @@ This script is meant to be run directly.
 """
 
 import os
+import sys
 import time
 import sys
 from queue import Queue
@@ -20,7 +21,11 @@ BAR_LENGTH = 60
 
 os.system('color')
 os.system('mode con: cols=65 lines=32')
-data, fs = sf.read('sound.wav')
+
+# If this file is compiled, we will use the _MEIPASS path (the temporary path/folder used by PyInstaller),
+# otherwise use the CWD (current working directory).
+data, fs = sf.read(getattr(sys, "_MEIPASS", os.getcwd()) + '/sound.wav')
+
 print(r"""               _           _                __      __         
     __________(_)___ ___  (_)___ _   ____ _/ /___  / /_  ____ _
    / ___/ ___/ / __ `__ \/ / __ `/  / __ `/ / __ \/ __ \/ __ `/
