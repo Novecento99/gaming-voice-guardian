@@ -27,5 +27,5 @@ Thank you! 😊
 
 ## Background
 
-"_Nowadays I dont play games too often, but when I do I get very excited and scream a lot. I scream so much that my housemates nicknamed me 'scimia', which means 'monkey' in Italian._"  
+"_Just made this to let my house mates not being wake up by my playing at pc._"  
 ~ Novecento99
