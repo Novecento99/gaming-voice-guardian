@@ -16,6 +16,8 @@ import sounddevice as sd
 import soundfile as sf
 from termcolor import colored
 
+from timeit import default_timer as timer
+
 scimia_enabled = True
 BAR_LENGTH = 60
 
@@ -86,6 +88,7 @@ def callback(indata: np.ndarray, outdata: np.ndarray, frames: int,
 
 
 with sd.Stream(callback=callback):
+    start=timer()
     try:
         while True:
             # Pull a chunk of audio from the queue
@@ -107,7 +110,9 @@ with sd.Stream(callback=callback):
                 # Add the color red if we have passed the audio threshold
                 print(colored(' [' + '!' * BAR_LENGTH + ']', 'red'), end='\r')
                 # Play a sound to the user to let them know that they are loud
-                if scimia_enabled:
+                if scimia_enabled and (timer()-start)>10:
+                    start = timer()
+                    print("lol")
                     sd.play(data, fs)
                     sd.wait()
     except KeyboardInterrupt:
