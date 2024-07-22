@@ -2,6 +2,8 @@
 
 A tool to measure your microphone volume and play an alarm sound if you talk too loud.
 
+
+# NEXT WIP: Graphical Interface, problably using pyqt6
 ## Usage
 
 Python 3 is needed to run the source code. You can run the following command to install all the required modules:
