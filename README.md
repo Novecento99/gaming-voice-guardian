@@ -1,4 +1,4 @@
-# Scimia
+# Gaming voice guardian
 
 A tool to measure your microphone volume and play an alarm sound if you talk too loud.
 
