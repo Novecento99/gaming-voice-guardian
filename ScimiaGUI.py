@@ -20,6 +20,11 @@ from PyQt6.QtWidgets import *
 from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget
 
+#         __o
+#       _ \<_
+#      (_)/(_)
+#```````         
+
 class scimiaWindow(QMainWindow):
     def __init__(self):
         super().__init__()
