@@ -1,5 +1,3 @@
-# generate sound instead of sound.wav?
-
 import sys
 
 import numpy as np
@@ -15,12 +13,12 @@ from PyQt6.QtGui import QFont
 #      (_)/(_)
 #```````         
 
-class monitorWindow(QMainWindow):
+class micMonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.widget = QWidget()
         
-        self.setWindowTitle("voice monitor")
+        self.setWindowTitle("mic monitor")
         self.setGeometry(500,120,200,120)
 
         self.masterGrid = QGridLayout()
@@ -32,8 +30,14 @@ class monitorWindow(QMainWindow):
         self.volumeBar.setOrientation(Qt.Orientation.Vertical)
         self.inputSelector = QComboBox()
         self.inputSelector.addItems(set([device["name"][0:80] for device in self.inputDevices]))
+        self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
+        
+        print(sd.default.device)
+        print()
+        print(sd.query_devices())
         self.outputSelector = QComboBox()
         self.outputSelector.addItems(set([device["name"][0:80] for device in self.outputDevices]))
+        self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
 
@@ -48,7 +52,7 @@ class monitorWindow(QMainWindow):
                 background-color: green;
             }
         """)
-        print(sd.default.device)
+        
 
         self.masterGrid.addWidget(self.triggerCheck)
         self.masterGrid.addWidget(self.multiplier)
@@ -91,7 +95,7 @@ class monitorWindow(QMainWindow):
     
     def PlayTone(self, freq=2500, duration=0.2, samplerate=44100, amplitude=0.5):
         """
-        Play a sine wave tone.
+        Play a sine wave tone. (by GPT)
 
         Parameters:
         - frequency: Frequency of the sine wave in Hz (default: 440 Hz, which is A4 note).
@@ -115,7 +119,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     font = QFont("Aptos", 10)
     app.setFont(font)
-    listenerWindow = monitorWindow()
+    listenerWindow = micMonitorWindow()
     listenerWindow.show()
     
     app.exec()
