@@ -21,19 +21,22 @@ from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QTimer
 
+import winsound
+frequency = 2500  # Set Frequency To 2500 Hertz
+duration = 100 # Set Duration To 1000 ms == 1 second
+
+
 #         __o
 #       _ \<_
 #      (_)/(_)
 #```````         
 
-
 class scimiaWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        widget = QWidget()
+        self.widget = QWidget()
         
         self.setWindowTitle("GamingListener")
-
         self.setGeometry(500,120,200,120)
 
         self.masterGrid = QGridLayout()
@@ -47,8 +50,8 @@ class scimiaWindow(QMainWindow):
         self.inputSelector.addItems([device["name"] for device in self.inputDevices])
         self.outputSelector = QComboBox()
         self.outputSelector.addItems([device["name"] for device in self.outputDevices])
-
         self.debugButton = QPushButton("debug")
+        self.options = QCheckBox("show options")
 
         self.masterGrid.addWidget(self.listeningCheck)
         self.masterGrid.addWidget(self.triggerCheck)
@@ -57,30 +60,38 @@ class scimiaWindow(QMainWindow):
         self.masterGrid.addWidget(self.outputSelector)
         self.masterGrid.addWidget(self.volumeBar)
         self.masterGrid.addWidget(self.debugButton)
-        self.volumeBar.setValue(1)
+        self.widget.setLayout(self.masterGrid)
 
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.updateProgressBar)
+        self.timer.start()
+        self.timer.setInterval(10)
+
+        self.debugButton.clicked.connect(self.playsound)
         
+        self.setCentralWidget(self.widget)
 
-        def updateBar():
-            print("I have to update the bar")
+        # Start the audio stream
+        self.stream = sd.InputStream(callback=self.audio_callback)
+        self.stream.start()
+
+    def audio_callback(self, indata, frames, time, status):
+        # Calculate the volume as the norm of the input data
+        self.volume_level = np.linalg.norm(indata) * 40
+
+    def updateProgressBar(self):
+        print("hello")
+        # Update the progress bar with the current volume level
+        self.volumeBar.setValue(min(int(self.volume_level), 100))
+        if (self.volume_level>100):
+            self.playsound()
 
 
-        timer = QTimer(self)
-        timer.timeout.connect(updateBar)
-        timer.start()
-        timer.setInterval(100)
-        print(timer.isActive())
-        print(timer.remainingTime())
-
-        self.debugButton.clicked.connect(updateBar)
-        widget.setLayout(self.masterGrid)
-        self.setCentralWidget(widget)
+    def playsound(self):
+        winsound.Beep(frequency, duration)
     
 
-    
 if __name__ == '__main__':
-    
-
     app = QApplication(sys.argv)
     listenerWindow = scimiaWindow()
     listenerWindow.show()
