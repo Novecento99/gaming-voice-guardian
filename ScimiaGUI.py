@@ -15,14 +15,13 @@ import soundfile as sf
 
 from timeit import default_timer as timer
 
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import *
-from PyQt6 import QtGui
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QTimer
 
 import winsound
-frequency = 2500  # Set Frequency To 2500 Hertz
+frequency = 1000  # Set Frequency To 2500 Hertz
 duration = 100 # Set Duration To 1000 ms == 1 second
 
 
@@ -44,22 +43,26 @@ class scimiaWindow(QMainWindow):
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
         self.listeningCheck = QCheckBox("enable listening")
         self.triggerCheck = QCheckBox("enable trigger")
-        self.threshold = QLineEdit("100")
+        self.multiplier = QLineEdit("100")
         self.volumeBar = QProgressBar()
+        self.volumeBar.setOrientation(Qt.Orientation.Vertical)
         self.inputSelector = QComboBox()
-        self.inputSelector.addItems([device["name"] for device in self.inputDevices])
+        self.inputSelector.addItems(set([device["name"].replace("\n", "")[0:80] for device in self.inputDevices]))
         self.outputSelector = QComboBox()
-        self.outputSelector.addItems([device["name"] for device in self.outputDevices])
+        self.outputSelector.addItems(set([device["name"].replace("\n", "")[0:80] for device in self.outputDevices]))
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
 
+
         self.masterGrid.addWidget(self.listeningCheck)
         self.masterGrid.addWidget(self.triggerCheck)
-        self.masterGrid.addWidget(self.threshold)
+        self.masterGrid.addWidget(self.multiplier)
         self.masterGrid.addWidget(self.inputSelector)
         self.masterGrid.addWidget(self.outputSelector)
-        self.masterGrid.addWidget(self.volumeBar)
+        
         self.masterGrid.addWidget(self.debugButton)
+        self.masterGrid.addWidget(self.options)
+        self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
         self.widget.setLayout(self.masterGrid)
 
         self.timer = QTimer(self)
@@ -72,23 +75,34 @@ class scimiaWindow(QMainWindow):
         self.setCentralWidget(self.widget)
 
         # Start the audio stream
-        self.stream = sd.InputStream(callback=self.audio_callback)
+        self.stream = sd.InputStream(callback=self.listenToMic)
         self.stream.start()
 
-    def audio_callback(self, indata, frames, time, status):
+    def listenToMic(self, indata, frames, time, status):
         # Calculate the volume as the norm of the input data
-        self.volume_level = np.linalg.norm(indata) * 40
+        self.volume_level = np.linalg.norm(indata) * int(self.multiplier.text())
 
     def updateProgressBar(self):
-        print("hello")
         # Update the progress bar with the current volume level
         self.volumeBar.setValue(min(int(self.volume_level), 100))
-        if (self.volume_level>100):
+        if (self.volume_level>100 and self.triggerCheck.isChecked()):
             self.playsound()
 
-
     def playsound(self):
+        self.volumeBar.setStyleSheet("""
+            QProgressBar {
+                border: 2px solid grey;
+                border-radius: 5px;
+                text-align: center;
+            }
+
+            QProgressBar::chunk {
+                background-color: red;
+                width: 20px;
+            }
+        """)
         winsound.Beep(frequency, duration)
+
     
 
 if __name__ == '__main__':
