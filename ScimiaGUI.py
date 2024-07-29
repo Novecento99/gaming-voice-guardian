@@ -5,12 +5,10 @@ import sys
 import numpy as np
 import sounddevice as sd
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import *
-from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
-
 
 #         __o
 #       _ \<_
@@ -28,7 +26,6 @@ class monitorWindow(QMainWindow):
         self.masterGrid = QGridLayout()
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
-        #self.listeningCheck = QCheckBox("enable listening")
         self.triggerCheck = QCheckBox("enable trigger")
         self.multiplier = QLineEdit("100")
         self.volumeBar = QProgressBar()
@@ -53,7 +50,6 @@ class monitorWindow(QMainWindow):
         """)
         print(sd.default.device)
 
-        #self.masterGrid.addWidget(self.listeningCheck)
         self.masterGrid.addWidget(self.triggerCheck)
         self.masterGrid.addWidget(self.multiplier)
         self.masterGrid.addWidget(self.inputSelector)
@@ -65,32 +61,35 @@ class monitorWindow(QMainWindow):
         self.widget.setLayout(self.masterGrid)
 
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.updateProgressBar)
+        self.timer.timeout.connect(self.UpdateProgressBar)
         self.timer.start()
         self.timer.setInterval(50)
 
-        self.debugButton.clicked.connect(self.trigger)
+        self.debugButton.clicked.connect(self.Debug)
         
         self.setCentralWidget(self.widget)
 
         # Start the audio stream
-        self.stream = sd.InputStream(callback=self.listenToMic)
+        self.stream = sd.InputStream(callback=self.ListenToMic)
         self.stream.start()
 
-    def listenToMic(self, indata, frames, time, status):
+    def Debug(self):
+        self.PlayTone()
+
+    def ListenToMic(self, indata, frames, time, status):
         # Calculate the volume as the norm of the input data
         self.volume_level = np.linalg.norm(indata) * int(self.multiplier.text())
 
-    def updateProgressBar(self):
+    def UpdateProgressBar(self):
         # Update the progress bar with the current volume level
         self.volumeBar.setValue(min(int(self.volume_level), 100))
         if (self.volume_level>100 and self.triggerCheck.isChecked()):
-            self.trigger()
+            self.Trigger()
 
-    def trigger(self):
-        self.play_tone()
+    def Trigger(self):
+        self.PlayTone()
     
-    def play_tone(self, freq=2500, duration=0.2, samplerate=44100, amplitude=0.5):
+    def PlayTone(self, freq=2500, duration=0.2, samplerate=44100, amplitude=0.5):
         """
         Play a sine wave tone.
 
