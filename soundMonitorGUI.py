@@ -43,13 +43,18 @@ class micMonitorWindow(QMainWindow):
         self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
         
         print(sd.default.device)
-        print()
         print(sd.query_devices())
+
+        
         self.outputSelector = QComboBox()
         self.outputSelector.addItems(set([device["name"][0:80] for device in self.outputDevices]))
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
+
+        
+
+        self.inputSelector.currentIndexChanged.connect(self.ChangeInput)
 
         self.volumeBar.setStyleSheet("""
             QProgressBar {
@@ -86,6 +91,9 @@ class micMonitorWindow(QMainWindow):
         # Start the audio stream
         self.stream = sd.InputStream(callback=self.ListenToMic)
         self.stream.start()
+
+    def ChangeInput(self):
+        1+1
 
     def Debug(self):
         self.PlayTone()
