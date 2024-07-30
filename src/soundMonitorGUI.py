@@ -31,7 +31,7 @@ class micMonitorWindow(QMainWindow):
         super().__init__()
         self.widget = QWidget()
         
-        self.setWindowTitle("mic monitor")
+        self.setWindowTitle("microphone guardian - by Novecento99")
         self.setGeometry(500,120,200,120)
 
         self.masterGrid = QGridLayout()
@@ -47,18 +47,12 @@ class micMonitorWindow(QMainWindow):
         self.inputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.inputDevices])
         self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
         
-        print(sd.default.device)
-        print(sd.query_devices())
-
-        
         self.outputSelector = QComboBox()
         self.outputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.outputDevices])
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
         self.outputSelector.currentIndexChanged.connect(self.restartOutput)
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
-
-        
 
         self.inputSelector.currentIndexChanged.connect(self.restartInput)
 
@@ -135,6 +129,7 @@ class micMonitorWindow(QMainWindow):
 
     def Trigger(self):
         self.PlayTone()
+        #add here some sort of graphical feedback
     
     def PlayTone(self, freq=2500, duration=0.2, samplerate=44100, amplitude=0.5):
         """
