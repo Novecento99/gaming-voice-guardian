@@ -16,15 +16,15 @@ from PyQt6.QtGui import QFont
 
 # TODO
 # store and retrieve settings
-# github workflow fix
-# select input/ouput devices
+# github workflow setup
+# select input/ouput devices DONE
 # custom sound
 # GUI aestetich improvement
 # graphical trigger feedback
-# bug when closing application
-# max value
+# bug when closing application DONE
+# max value monitoring
 # automatic gain
-# 
+
 
 class micMonitorWindow(QMainWindow):
     def __init__(self):
