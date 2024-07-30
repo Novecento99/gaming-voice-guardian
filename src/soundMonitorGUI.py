@@ -37,9 +37,10 @@ class micMonitorWindow(QMainWindow):
         self.triggerCheck = QCheckBox("enable trigger")
         self.multiplier = QLineEdit("100")
         self.volumeBar = QProgressBar()
+        self.feedbackLabel = QLabel()
         self.volumeBar.setOrientation(Qt.Orientation.Vertical)
         self.inputSelector = QComboBox()
-        self.inputSelector.addItems(set([device["name"][0:80] for device in self.inputDevices]))
+        self.inputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.inputDevices])
         self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
         
         print(sd.default.device)
@@ -47,14 +48,14 @@ class micMonitorWindow(QMainWindow):
 
         
         self.outputSelector = QComboBox()
-        self.outputSelector.addItems(set([device["name"][0:80] for device in self.outputDevices]))
+        self.outputSelector.addItems(([device["name"] for device in self.outputDevices]))
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
 
         
 
-        self.inputSelector.currentIndexChanged.connect(self.ChangeInput)
+        self.inputSelector.currentIndexChanged.connect(self.restartInput)
 
         self.volumeBar.setStyleSheet("""
             QProgressBar {
@@ -76,6 +77,7 @@ class micMonitorWindow(QMainWindow):
         
         self.masterGrid.addWidget(self.debugButton)
         self.masterGrid.addWidget(self.options)
+        self.masterGrid.addWidget(self.feedbackLabel)
         self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
         self.widget.setLayout(self.masterGrid)
 
@@ -90,10 +92,19 @@ class micMonitorWindow(QMainWindow):
 
         # Start the audio stream
         self.stream = sd.InputStream(callback=self.ListenToMic)
-        self.stream.start()
+        self.restartInput()
 
-    def ChangeInput(self):
-        1+1
+    def restartInput(self):
+        if self.stream.active:
+            self.stream.close()
+        try:
+            sd.default.device = int(self.inputSelector.currentText()[0:2])
+            self.stream = sd.InputStream(callback=self.ListenToMic)
+            self.stream.start()
+            self.feedbackLabel.setText("Started")
+        except KeyError as e:
+            self.feedbackLabel.setText("Not valid")
+            print(e)
 
     def Debug(self):
         self.PlayTone()
@@ -139,6 +150,6 @@ if __name__ == '__main__':
     app.setFont(font)
     listenerWindow = micMonitorWindow()
     listenerWindow.show()
-    
     app.exec()
+    listenerWindow.stream.close()
 
