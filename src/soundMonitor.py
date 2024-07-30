@@ -24,6 +24,7 @@ from PyQt6.QtGui import QFont
 # bug when closing application DONE
 # max value monitoring
 # automatic gain
+# possibility to run custom script
 
 
 class micMonitorWindow(QMainWindow):
@@ -31,8 +32,8 @@ class micMonitorWindow(QMainWindow):
         super().__init__()
         self.widget = QWidget()
         
-        self.setWindowTitle("microphone guardian - by Novecento99")
-        self.setGeometry(500,120,200,120)
+        self.setWindowTitle("Microphone Guardian - by Novecento99")
+        self.setGeometry(500,120,300,280)
 
         self.masterGrid = QGridLayout()
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
