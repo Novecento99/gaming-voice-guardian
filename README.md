@@ -1,7 +1,8 @@
-# microphone guardian
+# microphone guardian (wip)
 
 A tool to measure your microphone volume and play an alarm sound if you talk too loud.
 
+you can easily download the .exe from the dist/ folder
 
 # WIP: Graphical Interface
 
