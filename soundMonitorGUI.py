@@ -13,6 +13,16 @@ from PyQt6.QtGui import QFont
 #      (_)/(_)
 #```````         
 
+# TODO
+# store and retrieve settings
+# github workflow fix
+# select input/ouput devices
+# custom sound
+# GUI aestetich improvement
+# graphical trigger feedback
+# bug when closing application
+# 
+
 class micMonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
