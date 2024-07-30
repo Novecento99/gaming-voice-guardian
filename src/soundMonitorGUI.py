@@ -8,6 +8,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+#
 #         __o
 #       _ \<_
 #      (_)/(_)
@@ -21,6 +22,8 @@ from PyQt6.QtGui import QFont
 # GUI aestetich improvement
 # graphical trigger feedback
 # bug when closing application
+# max value
+# automatic gain
 # 
 
 class micMonitorWindow(QMainWindow):
@@ -35,6 +38,7 @@ class micMonitorWindow(QMainWindow):
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
         self.triggerCheck = QCheckBox("enable trigger")
+        self.triggerCheck.setChecked(True)
         self.multiplier = QLineEdit("100")
         self.volumeBar = QProgressBar()
         self.feedbackLabel = QLabel()
@@ -48,8 +52,9 @@ class micMonitorWindow(QMainWindow):
 
         
         self.outputSelector = QComboBox()
-        self.outputSelector.addItems(([device["name"] for device in self.outputDevices]))
+        self.outputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.outputDevices])
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
+        self.outputSelector.currentIndexChanged.connect(self.restartOutput)
         self.debugButton = QPushButton("debug")
         self.options = QCheckBox("show options")
 
@@ -94,16 +99,25 @@ class micMonitorWindow(QMainWindow):
         self.stream = sd.InputStream(callback=self.ListenToMic)
         self.restartInput()
 
+
     def restartInput(self):
         if self.stream.active:
             self.stream.close()
         try:
-            sd.default.device = int(self.inputSelector.currentText()[0:2])
+            sd.default.device = [int(self.inputSelector.currentText()[0:2]),sd.default.device[1]]
             self.stream = sd.InputStream(callback=self.ListenToMic)
             self.stream.start()
             self.feedbackLabel.setText("Started")
-        except KeyError as e:
-            self.feedbackLabel.setText("Not valid")
+        except Exception as e:
+            self.feedbackLabel.setText(e)
+            print(e)
+
+    def restartOutput(self):
+        try:
+            sd.default.device = [sd.default.device[0],int(self.outputSelector.currentText()[0:2])]
+            self.PlayTone()
+        except Exception as e:
+            self.feedbackLabel.setText(e)
             print(e)
 
     def Debug(self):
