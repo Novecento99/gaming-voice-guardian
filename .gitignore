@@ -236,3 +236,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+.aider*

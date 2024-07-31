@@ -47,7 +47,7 @@ class micMonitorWindow(QMainWindow):
         self.inputSelector = QComboBox()
         self.inputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.inputDevices])
         self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
-        
+        self.knob = QDial()
         self.outputSelector = QComboBox()
         self.outputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.outputDevices])
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
@@ -72,6 +72,7 @@ class micMonitorWindow(QMainWindow):
 
         self.masterGrid.addWidget(self.triggerCheck)
         self.masterGrid.addWidget(self.multiplier)
+        self.masterGrid.addWidget(self.knob)
         self.masterGrid.addWidget(self.inputSelector)
         self.masterGrid.addWidget(self.outputSelector)
         
