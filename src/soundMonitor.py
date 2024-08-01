@@ -33,17 +33,18 @@ class micMonitorWindow(QMainWindow):
         self.widget = QWidget()
         
         self.setWindowTitle("Microphone Guardian - by Novecento99")
-        self.setGeometry(500,120,300,280)
+        self.setGeometry(500,120,400,400)
 
         self.masterGrid = QGridLayout()
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
         self.triggerCheck = QCheckBox("enable trigger")
         self.triggerCheck.setChecked(True)
-        self.multiplier = QLineEdit("100")
+        self.gain = QLineEdit("100")
         self.volumeBar = QProgressBar()
         self.feedbackLabel = QLabel()
-        self.volumeBar.setOrientation(Qt.Orientation.Vertical)
+        self.feedbackLabel.setFixedHeight(10)
+        #self.volumeBar.setOrientation(Qt.Orientation.Vertical)
         self.inputSelector = QComboBox()
         self.inputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.inputDevices])
         self.inputSelector.setCurrentText(sd.query_devices()[1]["name"])
@@ -52,8 +53,9 @@ class micMonitorWindow(QMainWindow):
         self.outputSelector.addItems([(str(device["index"]).format("%02d",7)+" "+device["name"]) for device in self.outputDevices])
         self.outputSelector.setCurrentText(sd.query_devices()[4]["name"])
         self.outputSelector.currentIndexChanged.connect(self.restartOutput)
-        self.debugButton = QPushButton("debug")
-        self.options = QCheckBox("show options")
+        self.debugButton = QPushButton("test trigger")
+        self.optionsCheck = QCheckBox("minimal mode")
+        self.optionsCheck.checkStateChanged.connect(self.toggleOptions)
 
         self.inputSelector.currentIndexChanged.connect(self.restartInput)
 
@@ -71,15 +73,18 @@ class micMonitorWindow(QMainWindow):
         
 
         self.masterGrid.addWidget(self.triggerCheck)
-        self.masterGrid.addWidget(self.multiplier)
-        self.masterGrid.addWidget(self.knob)
+
+        
+        #self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
+        self.masterGrid.addWidget(self.volumeBar)
+        self.masterGrid.addWidget(self.optionsCheck)
+        self.masterGrid.addWidget(self.gain)
+        
         self.masterGrid.addWidget(self.inputSelector)
         self.masterGrid.addWidget(self.outputSelector)
-        
-        self.masterGrid.addWidget(self.debugButton)
-        self.masterGrid.addWidget(self.options)
         self.masterGrid.addWidget(self.feedbackLabel)
-        self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
+        self.masterGrid.addWidget(self.debugButton)
+        self.masterGrid.addWidget(self.knob,3,1)
         self.widget.setLayout(self.masterGrid)
 
         self.timer = QTimer(self)
@@ -95,6 +100,14 @@ class micMonitorWindow(QMainWindow):
         self.stream = sd.InputStream(callback=self.ListenToMic)
         self.restartInput()
 
+    def toggleOptions(self):
+        inverted = not(self.optionsCheck.isChecked())
+        self.inputSelector.setVisible(inverted)
+        self.outputSelector.setVisible(inverted)
+        self.gain.setVisible(inverted)
+        self.debugButton.setVisible(inverted)
+        self.knob.setVisible(inverted)
+        self.feedbackLabel.setVisible(inverted)
 
     def restartInput(self):
         if self.stream.active:
@@ -121,7 +134,7 @@ class micMonitorWindow(QMainWindow):
 
     def ListenToMic(self, indata, frames, time, status):
         # Calculate the volume as the norm of the input data
-        self.volume_level = np.linalg.norm(indata) * int(self.multiplier.text())
+        self.volume_level = np.linalg.norm(indata) * int(self.gain.text())
 
     def UpdateProgressBar(self):
         # Update the progress bar with the current volume level
