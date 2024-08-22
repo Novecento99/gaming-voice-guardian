@@ -33,13 +33,14 @@ class micMonitorWindow(QMainWindow):
         self.widget = QWidget()
         
         self.setWindowTitle("Microphone Guardian - by Novecento99")
-        self.setGeometry(500,120,400,400)
+        self.setGeometry(500,120,400,200)
 
         self.masterGrid = QGridLayout()
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
         self.triggerCheck = QCheckBox("enable trigger")
         self.triggerCheck.setChecked(True)
+        self.labelGain = QLabel("set the gain underneath")
         self.gain = QLineEdit("100")
         self.volumeBar = QProgressBar()
         self.feedbackLabel = QLabel()
@@ -78,13 +79,14 @@ class micMonitorWindow(QMainWindow):
         #self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
         self.masterGrid.addWidget(self.volumeBar)
         self.masterGrid.addWidget(self.optionsCheck)
+        self.masterGrid.addWidget(self.labelGain)
         self.masterGrid.addWidget(self.gain)
         
         self.masterGrid.addWidget(self.inputSelector)
         self.masterGrid.addWidget(self.outputSelector)
         self.masterGrid.addWidget(self.feedbackLabel)
         self.masterGrid.addWidget(self.debugButton)
-        self.masterGrid.addWidget(self.knob,3,1)
+        #self.masterGrid.addWidget(self.knob,3,1)
         self.widget.setLayout(self.masterGrid)
 
         self.timer = QTimer(self)
