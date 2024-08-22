@@ -32,7 +32,7 @@ class micMonitorWindow(QMainWindow):
         super().__init__()
         self.widget = QWidget()
         
-        self.setWindowTitle("Microphone Guardian - by Novecento99")
+        self.setWindowTitle("Microphone Guardian")
         self.setGeometry(500,120,400,200)
 
         self.masterGrid = QGridLayout()
