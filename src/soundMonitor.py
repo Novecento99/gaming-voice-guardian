@@ -8,6 +8,10 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+
+from configparser import ConfigParser
+
+
 #
 #         __o
 #       _ \<_
@@ -26,15 +30,17 @@ from PyQt6.QtGui import QFont
 # automatic gain
 # possibility to run custom script
 
-
 class micMonitorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.widget = QWidget()
+
+        
         
         self.setWindowTitle("Microphone Guardian")
         self.setGeometry(500,120,400,200)
 
+        
         self.masterGrid = QGridLayout()
         self.inputDevices =  [device for device in sd.query_devices() if (device["max_input_channels"] > 0)]
         self.outputDevices =  [device for device in sd.query_devices() if (device["max_output_channels"] > 0)]
@@ -78,7 +84,7 @@ class micMonitorWindow(QMainWindow):
         
         #self.masterGrid.addWidget(self.volumeBar,0,1,-1,1)
         self.masterGrid.addWidget(self.volumeBar)
-        self.masterGrid.addWidget(self.optionsCheck)
+        #self.masterGrid.addWidget(self.optionsCheck)
         self.masterGrid.addWidget(self.labelGain)
         self.masterGrid.addWidget(self.gain)
         
@@ -98,9 +104,29 @@ class micMonitorWindow(QMainWindow):
         
         self.setCentralWidget(self.widget)
 
+        self.iniPath ='config.ini'
         # Start the audio stream
         self.stream = sd.InputStream(callback=self.ListenToMic)
         self.restartInput()
+        self.retrieveConfigs()
+        #self.updateConfigs()
+
+
+    def updateConfigs(self):
+        config = ConfigParser()
+        config.read(self.iniPath )
+
+        config.set('main','volumeGain',self.gain.text())
+        config.set('main','inputDevice',self.inputDevices.())
+
+        with open(self.iniPath , 'w') as f:
+            config.write(f)
+
+    def retrieveConfigs(self):
+        config = ConfigParser()
+        config.read(self.iniPath)
+
+        self.gain.setText(config.get('main','volumeGain'))
 
     def toggleOptions(self):
         inverted = not(self.optionsCheck.isChecked())
@@ -108,7 +134,7 @@ class micMonitorWindow(QMainWindow):
         self.outputSelector.setVisible(inverted)
         self.gain.setVisible(inverted)
         self.debugButton.setVisible(inverted)
-        self.knob.setVisible(inverted)
+        #self.knob.setVisible(inverted)
         self.feedbackLabel.setVisible(inverted)
 
     def restartInput(self):
