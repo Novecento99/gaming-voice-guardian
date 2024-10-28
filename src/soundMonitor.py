@@ -63,7 +63,7 @@ class micMonitorWindow(QMainWindow):
         self.thresholdBox = QLineEdit("50")
         self.thresholdBox.setMaximumWidth(50)
 
-        self.gainLabel = QLabel("- Mic Sensitivity/Gain)")
+        self.gainLabel = QLabel("- Mic Sensitivity (Gain)")
         self.gainBox = QLineEdit("100")
         self.gainBox.setMaximumWidth(configBoxSize)
 
