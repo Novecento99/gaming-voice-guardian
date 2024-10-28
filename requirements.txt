@@ -3,3 +3,4 @@ numpy
 termcolor
 sounddevice
 soundfile
+pyqt6
