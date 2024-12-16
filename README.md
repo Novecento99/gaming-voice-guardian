@@ -1,19 +1,17 @@
-# gaming voice guardian
+# Gaming Voice Guardian
 
-A tool to measure your microphone volume and play an alarm sound if you (or your son/daughter/sibling/cat/whatever) talk too loud.
+Gaming Voice Guardian is a tool designed to measure your microphone volume and play an alarm sound if you or anyone else speaks too loudly.
 
 ## Download 
 
-[download here](https://github.com/Novecento99/gaming-voice-guardian/releases/download/v1/soundMonitor.exe)
+You can download the latest release of Gaming Voice Guardian [here](https://github.com/Novecento99/gaming-voice-guardian/releases/download/v1/soundMonitor.exe).
 
-##  Graphical Interface
+## Graphical Interface
 
-![alt text](GUIv1.png)
+![Gaming Voice Guardian GUI](GUIv1.png)
 
 ## Contributing
 
-Pull requests and issues are welcome!  
-Feel free to submit any bugs you find.  
-If you want to help make this tool better, make a few commits and create a pull request.  
-Thank you! 😊
+Pull requests and issues are welcome! If you encounter any bugs, please feel free to submit them. If you would like to contribute to the improvement of this tool, make a few commits and create a pull request. Thank you! 😊
+
 Gabriele L.
